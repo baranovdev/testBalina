@@ -37,6 +37,6 @@ interface ImageApi {
         token: String?,
         @Path("imageId")
         imageId: Int,
-    ): retrofit2.Response<Response<ImageResponse>>
+    ): Call<Unit>
 
 }

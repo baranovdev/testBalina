@@ -4,6 +4,8 @@ import by.baranovdev.testbalina.data.model.data.Image
 import by.baranovdev.testbalina.data.model.mapper.ImageListMapper
 import by.baranovdev.testbalina.data.model.mapper.ImageMapper
 import by.baranovdev.testbalina.data.remote.dto.base.ListResponse
+import by.baranovdev.testbalina.data.remote.dto.base.NetworkError
+import by.baranovdev.testbalina.data.remote.dto.base.Response
 import by.baranovdev.testbalina.data.remote.dto.image.ImageRequest
 import by.baranovdev.testbalina.data.remote.dto.image.ImageResponse
 import by.baranovdev.testbalina.data.remote.service.ImageApi
@@ -15,8 +17,10 @@ import by.baranovdev.testbalina.utils.ErrorHandler
 import by.baranovdev.testbalina.utils.getDefaultCallback
 import by.baranovdev.testbalina.utils.getDefaultListCallback
 import by.baranovdev.testbalina.utils.parseResult
+import retrofit2.Call
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
+import javax.security.auth.callback.Callback
 
 class ImageNetworkRepository @Inject constructor(
     private val imageApi: ImageApi,
@@ -50,6 +54,13 @@ class ImageNetworkRepository @Inject constructor(
     }
 
     fun deleteImage(imageId: Int) {
-        imageApi.deleteImage(token = userLocalRepository.getUser()?.token, imageId = imageId)
+        imageApi.deleteImage(token = userLocalRepository.getUser()?.token, imageId = imageId).enqueue(object : retrofit2.Callback<Unit>{
+            override fun onResponse(call: Call<Unit>, response: retrofit2.Response<Unit>) {
+                //Just do nothing
+            }
+            override fun onFailure(call: Call<Unit>, t: Throwable) {
+                errorHandler.initError(NetworkError(t.message.toString()))
+            }
+        })
     }
 }

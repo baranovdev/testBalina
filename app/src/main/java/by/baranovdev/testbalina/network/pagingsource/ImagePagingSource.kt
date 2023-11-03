@@ -27,8 +27,8 @@ class ImagePagingSource(
         val pageSize = params.loadSize
 
         val response = imageNetworkRepository.loadImageList(page)
-        response?.map { imageLocalRepository.insertImage(it) }
-        val data = response?.let{
+        response.map { imageLocalRepository.insertImage(it) }
+        val data = response.let{
             loadingFlag = ImageSource.NETWORK
             it
         } ?: imageLocalRepository.getImagePage(page, pageSize)
