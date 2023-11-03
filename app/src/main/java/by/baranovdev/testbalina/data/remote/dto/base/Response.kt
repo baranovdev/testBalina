@@ -7,6 +7,6 @@ data class Response<R>(
     @field:SerializedName("data")
     val data: R?,
     @field:SerializedName("status")
-    val status: Status?
+    val status: Int?
 )
 

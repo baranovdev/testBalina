@@ -4,6 +4,7 @@ import by.baranovdev.testbalina.data.remote.dto.base.ListResponse
 import by.baranovdev.testbalina.data.remote.dto.base.Response
 import by.baranovdev.testbalina.data.remote.dto.image.ImageRequest
 import by.baranovdev.testbalina.data.remote.dto.image.ImageResponse
+import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
@@ -20,7 +21,7 @@ interface ImageApi {
         token: String?,
         @Query("page")
         page: Int = 0
-    ): ListResponse<ImageResponse>
+    ): retrofit2.Response<ListResponse<ImageResponse>>
 
     @POST("api/image")
     suspend fun sendImage(
@@ -28,14 +29,14 @@ interface ImageApi {
         token: String?,
         @Body
         requestBody: ImageRequest
-    ):Response<ImageResponse>
+    ):retrofit2.Response<Response<ImageResponse>>
 
     @DELETE("api/image/{imageId}")
-    suspend fun deleteImage(
+    fun deleteImage(
         @Header("Access-Token")
         token: String?,
         @Path("imageId")
         imageId: Int,
-    ): Response<ImageResponse>
+    ): retrofit2.Response<Response<ImageResponse>>
 
 }

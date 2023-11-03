@@ -7,34 +7,62 @@ import by.baranovdev.testbalina.data.remote.dto.base.ListResponse
 import by.baranovdev.testbalina.data.remote.dto.base.NetworkError
 import by.baranovdev.testbalina.data.remote.dto.base.Response
 import by.baranovdev.testbalina.data.remote.dto.base.Status
+import by.baranovdev.testbalina.data.remote.dto.image.ImageResponse
+import by.baranovdev.testbalina.utils.BaseUtils.ifFalse
+import by.baranovdev.testbalina.utils.BaseUtils.ifTrue
+import okhttp3.ResponseBody
+import retrofit2.Call
+import retrofit2.CallAdapter
+import retrofit2.Retrofit
+import java.lang.reflect.Type
 import javax.inject.Inject
+import javax.inject.Singleton
 
-class ErrorHandler @Inject constructor() {
+@Singleton
+class ErrorHandler {
 
     private val _networkErrorLiveData: MutableLiveData<NetworkError> = MutableLiveData()
     val networkErrorLiveData: LiveData<NetworkError> = _networkErrorLiveData
 
-    fun initError(error: NetworkError){
-        _networkErrorLiveData.value = error
+    fun initError(error: NetworkError) {
+        _networkErrorLiveData.postValue(error)
     }
 
 }
 
 
-fun <T> Result<Response<T>>.parseResult(errorHandler: ErrorHandler): Response<T> {
-    onFailure {
-        Log.e("NETWORK ERROR", it.message.toString())
-        errorHandler.initError(NetworkError(it.message.toString()))
-        return Response(data = null, status = Status.ERROR)
+fun <T> retrofit2.Response<Response<T>>.parseResult(errorHandler: ErrorHandler): Response<T> {
+    this.isSuccessful.ifTrue {
+        when (this.body()?.status?.toStatus()) {
+            Status.ERROR_UNKNOWN -> errorHandler.initError(NetworkError(message = "Unknown error"))
+            Status.ERROR_NOT_FOUND -> errorHandler.initError(NetworkError(message = "Not found"))
+            Status.ERROR_UNAUTHORIZED -> errorHandler.initError(NetworkError(message = "You should be authorized"))
+            Status.ERROR_NO_ACCESS -> errorHandler.initError(NetworkError(message = "Token expired"))
+            else -> {}
+        }
     }
-    return Response(data = this.getOrNull()?.data, Status.OK)
+    val body = this.body()
+    return if (this.isSuccessful && body != null) body else Response(data = null, status = 400)
 }
 
-fun <T> Result<ListResponse<T>>.parseResult(errorHandler: ErrorHandler): ListResponse<T> {
-    onFailure {
-        Log.e("NETWORK ERROR", it.message.toString())
-        errorHandler.initError(NetworkError(it.message.toString()))
-        return ListResponse(data = null, status = Status.ERROR)
+fun <T> retrofit2.Response<ListResponse<T>>.parseResult(errorHandler: ErrorHandler): ListResponse<T> {
+    when (this.body()?.status?.toStatus()) {
+        Status.ERROR_UNKNOWN -> errorHandler.initError(NetworkError(message = "Unknown error"))
+        Status.ERROR_NOT_FOUND -> errorHandler.initError(NetworkError(message = "Not found"))
+        Status.ERROR_UNAUTHORIZED -> errorHandler.initError(NetworkError(message = "You should be authorized"))
+        Status.ERROR_NO_ACCESS -> errorHandler.initError(NetworkError(message = "Token expired"))
+        else -> {}
     }
-    return ListResponse(data = this.getOrNull()?.data, Status.OK)
+    val body = this.body()
+    return if (this.isSuccessful && body != null) body else ListResponse(data = null, status = 400)
 }
+
+fun Int.toStatus(): Status = when (this) {
+    200 -> Status.OK
+    400 -> Status.ERROR_UNKNOWN
+    401 -> Status.ERROR_UNAUTHORIZED
+    403 -> Status.ERROR_NO_ACCESS
+    404 -> Status.ERROR_NOT_FOUND
+    else -> Status.ERROR_UNKNOWN
+}
+

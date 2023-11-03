@@ -1,9 +1,11 @@
 package by.baranovdev.testbalina.ui.imagedetails
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
@@ -66,6 +68,9 @@ class ImageDetailsFragment: Fragment(), CommentItemAdapter.OnCommentClickListene
 
         binding.btnSendComment.setOnClickListener {
             viewModel.sendComment(binding.textInputLayout.editText?.text.toString())
+            binding.textInputLayout.clearFocus()
+            binding.textInputLayout.editText?.text = null
+            (requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager).hideSoftInputFromWindow(binding.root.windowToken, 0)
         }
     }
 
