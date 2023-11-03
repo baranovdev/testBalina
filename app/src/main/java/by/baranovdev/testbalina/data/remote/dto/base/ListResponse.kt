@@ -6,6 +6,7 @@ import com.google.gson.annotations.SerializedName
 class ListResponse<R>(
     @field:SerializedName("data")
     val data: List<R>?,
-    val status: Status?
+    @field:SerializedName("status")
+    val status: Int?
 )
 

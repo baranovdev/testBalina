@@ -14,12 +14,12 @@ interface UserApi {
     suspend fun signIn(
         @Body
         body: UserRequest
-    ): Response<UserResponse>
+    ): retrofit2.Response<Response<UserResponse>>
 
     @POST("api/account/signup")
     suspend fun signUp(
         @Body
         body: UserRequest
-    ):  Response<UserResponse>
+    ): retrofit2.Response<Response<UserResponse>>
 
 }

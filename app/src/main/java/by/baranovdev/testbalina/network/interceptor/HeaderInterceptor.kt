@@ -12,12 +12,14 @@ import javax.inject.Inject
 
 class HeaderInterceptor @Inject constructor(
     private val userLocalRepository: UserLocalRepository
-): Interceptor {
+) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         val request = chain.request().newBuilder().apply {
             addHeader("Content-Type", "application/json")
         }.build()
         Log.i("OkHttp", request.toString())
-        return chain.proceed(chain.request())
+        return chain.proceed(chain.request()).apply {
+            Log.e("OkHttp", this.body.toString())
+        }
     }
 }

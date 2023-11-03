@@ -34,12 +34,9 @@ class CommentPagingSource(
         val pageSize = params.loadSize
 
         imageId.let { imageIdTemp ->
-            val response = commentNetworkRepository.getCommentsByImageId(imageIdTemp, page).let {
-                it.data?.map { comment -> Log.e("COMMENT", comment.toString()) }
-                CommentMapper().mapCommentsFromNetworkToUi(it, imageIdTemp)
-            }
+            val response = commentNetworkRepository.getCommentsByImageId(imageIdTemp, page)
 
-            val data = response?.let {
+            val data = response.let {
                 loadingFlag = ImageSource.NETWORK
                 it
             } ?: commentLocalRepository.getCommentsPage(imageIdTemp,page, pageSize) ?: return LoadResult.Page(

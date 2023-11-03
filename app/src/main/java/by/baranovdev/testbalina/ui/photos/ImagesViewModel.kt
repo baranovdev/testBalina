@@ -13,6 +13,7 @@ import by.baranovdev.testbalina.data.remote.dto.image.ImageRequest
 import by.baranovdev.testbalina.database.repository.ImageLocalRepository
 import by.baranovdev.testbalina.network.pagingsource.ImagePagingSource
 import by.baranovdev.testbalina.network.repository.ImageNetworkRepository
+import by.baranovdev.testbalina.utils.ErrorHandler
 import by.baranovdev.testbalina.utils.ImageUtils
 import com.google.android.gms.location.LocationResult
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -27,7 +28,8 @@ import javax.inject.Inject
 @HiltViewModel
 class ImagesViewModel @Inject constructor(
     private val imageNetworkRepository: ImageNetworkRepository,
-    private val imageLocalRepository: ImageLocalRepository
+    private val imageLocalRepository: ImageLocalRepository,
+    private val errorHandler: ErrorHandler
 ) : ViewModel() {
 
     private var currentPagingSource: ImagePagingSource? = null

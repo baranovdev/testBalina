@@ -3,6 +3,7 @@ package by.baranovdev.testbalina.data.remote.service
 import by.baranovdev.testbalina.data.remote.dto.base.ListResponse
 import by.baranovdev.testbalina.data.remote.dto.base.Response
 import by.baranovdev.testbalina.data.remote.dto.comment.CommentResponse
+import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
@@ -21,7 +22,7 @@ interface CommentApi {
         imageId: Int,
         @Body
         commentText: String
-    ): Response<CommentResponse>
+    ): retrofit2.Response<Response<CommentResponse>>
 
     @GET("api/image/{imageId}/comment")
     suspend fun getComments(
@@ -33,7 +34,7 @@ interface CommentApi {
 
         @Query("page")
         page: Int
-    ): ListResponse<CommentResponse>
+    ): retrofit2.Response<ListResponse<CommentResponse>>
 
     @DELETE("api/image/{imageId}/comment/{commentId}")
     suspend fun deleteComment(
