@@ -76,6 +76,5 @@ class ImageItemViewHolder(
 
 private object ImageDiffItemCallback: DiffUtil.ItemCallback<Image>(){
     override fun areItemsTheSame(oldItem: Image, newItem: Image): Boolean  = oldItem.id == newItem.id
-
     override fun areContentsTheSame(oldItem: Image, newItem: Image): Boolean = oldItem.url == newItem.url
 }
