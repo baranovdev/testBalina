@@ -20,7 +20,7 @@
     <string name="image_details_title">Image Details</string>
     <string name="dialog_confirm">Confirm</string>
     <string name="dialog_cancel">Cancel</string>
-    <string name="dialog_confirm_action">Cancel</string>
+    <string name="dialog_confirm_action">Confirm action</string>
 
     <string name="error_title">Something went wrong</string>
 </resources>
